@@ -76,6 +76,8 @@ For NixOS support there is a separate project being maintained @ [Hydenix](https
 > [!CAUTION]
 > The script modifies your `grub` or `systemd-boot` config to enable NVIDIA DRM.
 
+### Standard Installation
+
 To install, execute the following commands:
 
 ```shell
@@ -95,6 +97,27 @@ cd ~/HyDE/Scripts
 > [!IMPORTANT]
 > Refer your list from `Scripts/pkg_extra.lst`
 > or you can `cp Scripts/pkg_extra.lst Scripts/pkg_user.lst` if you wish to install all extra packages.
+
+### Streamlined Installation (New!)
+
+For a faster, simplified installation focused on core components:
+
+```shell
+pacman -S --needed git base-devel
+git clone --depth 1 https://github.com/HyDE-Project/HyDE ~/HyDE
+cd ~/HyDE/Scripts
+./install_streamlined.sh
+```
+
+The streamlined installer:
+- Installs only Hyprland and essential packages
+- Automatically sets up Chaotic AUR
+- Installs yay-bin as the default AUR helper
+- Installs all available themes
+- Uses sensible defaults (minimal user interaction)
+- Skips optional components for a faster setup
+
+Use `-n` to skip NVIDIA configuration or `-h` for help.
 
 <!--
 
@@ -264,6 +287,46 @@ For more information, visit [HyDE-Project/hyde-themes](https://github.com/HyDE-P
 <img src="https://raw.githubusercontent.com/prasanthrangan/hyprdots/main/Source/assets/rofi_style_11.png"/></td><td>
 <img src="https://raw.githubusercontent.com/prasanthrangan/hyprdots/main/Source/assets/rofi_style_12.png"/></td></tr>
 </table></div>
+
+<div align="right">
+  <br>
+  <a href="#-design-by-t2"><kbd> <br> 🡅 <br> </kbd></a>
+</div>
+
+<a id="wallbash"></a>
+<img src="https://readme-typing-svg.herokuapp.com?font=Lexend+Giga&size=25&pause=1000&color=CCA9DD&vCenter=true&width=435&height=25&lines=WALLBASH" width="450"/>
+
+---
+
+Wallbash is now available as a **standalone application** that works independently of the HyDE environment!
+
+## Standalone Wallbash
+
+Wallbash generates dynamic color schemes from your wallpapers and applies them across your entire desktop environment.
+
+### Features
+- Extract color palettes from any wallpaper
+- Multiple color profiles (default, vibrant, pastel, mono)
+- Theme Hyprland, GTK, Qt, Kitty, Rofi, Waybar, and more
+- Works without requiring the full HyDE installation
+
+### Installation
+```bash
+cd ~/HyDE/wallbash
+./install.sh
+```
+
+### Usage
+```bash
+# Basic usage
+wallbash /path/to/wallpaper.jpg
+
+# Use specific color profile
+wallbash --vibrant /path/to/wallpaper.jpg
+wallbash --pastel /path/to/wallpaper.jpg
+```
+
+For more details, see [wallbash/README.md](wallbash/README.md)
 
 <div align="center"><table><tr>Wlogout Menu</tr><tr><td>
 <img src="https://raw.githubusercontent.com/prasanthrangan/hyprdots/main/Source/assets/wlog_style_1.png"/></td><td>
