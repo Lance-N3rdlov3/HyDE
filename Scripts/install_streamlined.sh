@@ -4,6 +4,8 @@
 #|-/ /--| Optimized for speed and simplicity      |-/ /--|#
 #|/ /---+------------------------------------------+/ /---|#
 
+set -e  # Exit on error
+
 cat <<"EOF"
 
 -------------------------------------------------
@@ -34,8 +36,9 @@ fi
 export flg_Nvidia=1
 export flg_DryRun=0
 export use_default="--noconfirm"
+USE_MINIMAL=0
 
-while getopts nth RunStep; do
+while getopts ntmh RunStep; do
     case $RunStep in
     n)
         export flg_Nvidia=0
@@ -45,20 +48,26 @@ while getopts nth RunStep; do
         flg_DryRun=1
         print_log -n "[test-run] " -b "enabled :: " "Testing without executing"
         ;;
+    m)
+        USE_MINIMAL=1
+        print_log -g "[minimal] " -b "Using :: " "minimal package list"
+        ;;
     h)
         cat <<EOF
 Usage: $0 [options]
             n : ignore/[n]o [n]vidia actions
             t : [t]est run without executing
+            m : use [m]inimal package list (fastest)
             h : show this [h]elp message
 
 NOTE: This streamlined installer will:
-      - Install Hyprland and core packages
+      - Install Hyprland and essential packages
       - Set up pacman wrapper (yay-bin by default)
       - Activate Chaotic AUR
-      - Install keybindings
+      - Install keybindings and configs
       - Install all available themes
       - Use sensible defaults (non-interactive)
+      - Complete in minimal time
 
 EOF
         exit 0
@@ -150,7 +159,15 @@ cat <<"EOF"
 
 EOF
 
-cp "${scrDir}/pkg_core.lst" "${scrDir}/install_pkg.lst"
+# Select package list based on minimal flag
+if [ ${USE_MINIMAL} -eq 1 ]; then
+    print_log -sec "packages" -stat "Using" "minimal package list"
+    cp "${scrDir}/pkg_minimal.lst" "${scrDir}/install_pkg.lst"
+else
+    print_log -sec "packages" -stat "Using" "core package list"
+    cp "${scrDir}/pkg_core.lst" "${scrDir}/install_pkg.lst"
+fi
+
 trap 'mv "${scrDir}/install_pkg.lst" "${cacheDir}/logs/${HYDE_LOG}/install_pkg.lst"' EXIT
 
 #--------------------------------#
