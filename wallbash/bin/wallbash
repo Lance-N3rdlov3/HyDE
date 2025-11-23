@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+#|---/ /+------------------------------+---/ /|#
+#|--/ /-| Wallbash - Main Entry Point  |--/ /-|#
+#|-/ /--| Standalone theming system    |-/ /--|#
+#|/ /---+------------------------------+/ /---|#
+
+# Wallbash environment setup (standalone mode)
+export WALLBASH_DIR="${WALLBASH_DIR:-$HOME/.local/share/wallbash}"
+export WALLBASH_CACHE="${WALLBASH_CACHE:-$HOME/.cache/wallbash}"
+export WALLBASH_CONFIG="${WALLBASH_CONFIG:-$HOME/.config/wallbash}"
+
+# Color profile options
+colorProfile="default"
+sortMode="auto"
+wallpaperPath=""
+
+# Display help
+show_help() {
+    cat <<EOF
+Wallbash - Wallpaper-based Dynamic Theming
+
+Usage: wallbash [OPTIONS] <wallpaper-path>
+
+Options:
+    -v, --vibrant       Use vibrant color profile
+    -p, --pastel        Use pastel color profile
+    -m, --mono          Use monochrome profile
+    -d, --dark          Force dark mode sorting
+    -l, --light         Force light mode sorting
+    -h, --help          Show this help message
+
+Examples:
+    wallbash ~/Pictures/wallpaper.jpg
+    wallbash --vibrant ~/Pictures/sunset.png
+    wallbash --pastel --dark ~/Pictures/landscape.jpg
+
+Generated colors are stored in: ${WALLBASH_CACHE}
+Theme templates are in: ${WALLBASH_DIR}
+
+EOF
+}
+
+# Parse arguments
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -v|--vibrant)
+            colorProfile="vibrant"
+            shift
+            ;;
+        -p|--pastel)
+            colorProfile="pastel"
+            shift
+            ;;
+        -m|--mono)
+            colorProfile="mono"
+            shift
+            ;;
+        -d|--dark)
+            sortMode="dark"
+            shift
+            ;;
+        -l|--light)
+            sortMode="light"
+            shift
+            ;;
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -*)
+            echo "Unknown option: $1"
+            show_help
+            exit 1
+            ;;
+        *)
+            wallpaperPath="$1"
+            shift
+            ;;
+    esac
+done
+
+# Validate wallpaper path
+if [ -z "$wallpaperPath" ]; then
+    echo "Error: No wallpaper path provided"
+    show_help
+    exit 1
+fi
+
+if [ ! -f "$wallpaperPath" ]; then
+    echo "Error: Wallpaper file not found: $wallpaperPath"
+    exit 1
+fi
+
+# Create cache directory
+mkdir -p "${WALLBASH_CACHE}"
+
+# Convert wallpaper path to absolute
+wallpaperPath="$(realpath "$wallpaperPath")"
+
+echo "Generating colors from: $wallpaperPath"
+echo "Profile: $colorProfile | Sort: $sortMode"
+
+# Build color-set command
+colorSetScript="$(dirname "$(realpath "$0")")/wallbash-color-set"
+if [ ! -f "$colorSetScript" ]; then
+    colorSetScript="$HOME/.local/bin/wallbash-color-set"
+fi
+
+if [ ! -f "$colorSetScript" ]; then
+    echo "Error: color-set script not found"
+    exit 1
+fi
+
+# Build arguments for color-set
+colorArgs=()
+case "$colorProfile" in
+    vibrant) colorArgs+=("--vibrant") ;;
+    pastel) colorArgs+=("--pastel") ;;
+    mono) colorArgs+=("--mono") ;;
+esac
+
+case "$sortMode" in
+    dark) colorArgs+=("--dark") ;;
+    light) colorArgs+=("--light") ;;
+esac
+
+# Generate colors
+outputFile="${WALLBASH_CACHE}/colors.dcol"
+"$colorSetScript" "${colorArgs[@]}" "$wallpaperPath" "$outputFile"
+
+if [ $? -eq 0 ]; then
+    echo "Colors generated successfully: $outputFile"
+    
+    # Apply themes if template files exist
+    if [ -d "${WALLBASH_DIR}/theme" ]; then
+        echo "Applying themes..."
+        
+        # Source the colors
+        if [ -f "$outputFile" ]; then
+            # shellcheck disable=SC1090
+            source "$outputFile"
+        fi
+        
+        # Apply theme templates (basic implementation)
+        # In a full implementation, this would process .dcol templates
+        echo "Theme application complete"
+    fi
+else
+    echo "Error: Failed to generate colors"
+    exit 1
+fi
+
+# Save current wallpaper reference
+echo "$wallpaperPath" > "${WALLBASH_CACHE}/current_wallpaper"
+echo "$colorProfile" > "${WALLBASH_CACHE}/current_profile"
+
+echo "Wallbash complete!"

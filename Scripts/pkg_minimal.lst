@@ -1,0 +1,33 @@
+# --------------------------------------------------- // Core System
+uwsm                                                   # Wayland session manager
+pipewire                                               # audio/video server
+pipewire-alsa pipewire-audio pipewire-jack pipewire-pulse
+gst-plugin-pipewire wireplumber pavucontrol pamixer
+networkmanager network-manager-applet
+bluez bluez-utils blueman
+brightnessctl playerctl
+
+# --------------------------------------------------- // Display Manager
+sddm qt5-quickcontrols qt5-quickcontrols2 qt5-graphicaleffects
+
+# --------------------------------------------------- // Hyprland Core
+hyprland dunst rofi waybar swww hyprlock wlogout
+grim hyprpicker slurp satty cliphist wl-clip-persist hyprsunset
+
+# --------------------------------------------------- // Essential Dependencies
+polkit-gnome xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+xdg-user-dirs pacman-contrib parallel jq imagemagick
+libnotify noto-fonts-emoji
+
+# --------------------------------------------------- // Theming
+nwg-look qt5ct qt6ct kvantum kvantum-qt5 qt5-wayland qt6-wayland
+
+# --------------------------------------------------- // Core Applications
+kitty dolphin ark unzip vim
+fastfetch fzf
+
+# --------------------------------------------------- // Shell (conditional)
+starship|zsh eza|zsh
+
+# --------------------------------------------------- // HyDE Essentials
+hypridle
