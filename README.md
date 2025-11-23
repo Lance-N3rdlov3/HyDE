@@ -117,7 +117,12 @@ The streamlined installer:
 - Uses sensible defaults (minimal user interaction)
 - Skips optional components for a faster setup
 
-Use `-n` to skip NVIDIA configuration or `-h` for help.
+**Options:**
+- Use `-m` for minimal installation (37 packages, fastest)
+- Use `-n` to skip NVIDIA configuration
+- Use `-h` for help
+
+For detailed information, see [STREAMLINED_INSTALL.md](STREAMLINED_INSTALL.md)
 
 <!--
 
